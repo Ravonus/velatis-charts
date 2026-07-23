@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   ChartsClient,
   buildShareUrl,
@@ -58,5 +58,41 @@ describe("chart URL state", () => {
     } finally {
       globalThis.fetch = original;
     }
+  });
+
+  it("calls the open ephemeris API without importing its implementation", async () => {
+    const fetchImplementation = vi.fn(
+      async (input: string | URL | Request, init?: RequestInit) => {
+        expect(new URL(String(input)).pathname).toBe("/api/v1/ephemeris");
+        expect(JSON.parse(String(init?.body))).toEqual({
+          operation: "positions",
+          input: {
+            samples: [{ julianDay: 2_461_231, bodyIds: [0] }],
+          },
+        });
+        return new Response(
+          JSON.stringify({
+            apiVersion: "v1",
+            operation: "positions",
+            engine: { name: "Swiss Ephemeris", version: "test" },
+            result: [{ positions: [{ bodyId: 0, longitude: 107.5 }] }],
+          }),
+          {
+            headers: { "content-type": "application/json" },
+          },
+        );
+      },
+    );
+    const client = new ChartsClient({
+      baseUrl: "https://charts.example.test",
+      fetch: fetchImplementation as typeof fetch,
+    });
+
+    await expect(
+      client.ephemeris("positions", {
+        samples: [{ julianDay: 2_461_231, bodyIds: [0] }],
+      }),
+    ).resolves.toEqual([{ positions: [{ bodyId: 0, longitude: 107.5 }] }]);
+    expect(fetchImplementation).toHaveBeenCalledOnce();
   });
 });

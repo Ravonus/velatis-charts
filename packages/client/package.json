@@ -1,6 +1,6 @@
 {
   "name": "@velatis/charts-client",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Browser and Node client for Velatis Charts URLs and APIs.",
   "license": "Apache-2.0",
   "homepage": "https://github.com/Ravonus/velatis-charts#readme",

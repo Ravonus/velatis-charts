@@ -11,14 +11,20 @@ The `--allow-build` permission is scoped to the native Swiss Ephemeris binding.
 Until the npm package is published, replace the package name with:
 
 ```text
-https://github.com/Ravonus/velatis-charts/releases/download/v0.1.0/velatis-charts-server-0.1.0.tgz
+https://github.com/Ravonus/velatis-charts/releases/download/v0.2.0/velatis-charts-server-0.2.0.tgz
 ```
 
 The server exposes:
 
 - `POST /api/v1/charts`
+- `POST /api/v1/ephemeris`
 - `GET /api/v1/health`
 - the shareable chart builder at `/`
+
+The ephemeris endpoint provides stateless JSON operations for chart frames,
+batched positions, exact crossings, eclipse searches, rise/set calculations,
+and fixed stars. It is the integration boundary for applications that need the
+complete calculation engine without bundling that engine themselves.
 
 The server and bundled web UI are AGPL-3.0-or-later. Network operators must
 provide corresponding source to users as required by that license. The

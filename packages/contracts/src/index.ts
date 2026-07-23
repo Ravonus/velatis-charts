@@ -178,6 +178,33 @@ export interface ApiError {
   };
 }
 
+/**
+ * Open-ended, versioned calculation surface for consumers that need more than
+ * the portable ChartState contract. Operations remain stateless and JSON-only;
+ * the AGPL server is the sole process that loads Swiss Ephemeris.
+ */
+export interface EphemerisOperationRequestV1 {
+  operation:
+    | "chart-frame"
+    | "positions"
+    | "crossings"
+    | "eclipses"
+    | "rise-set"
+    | "fixed-star-catalog"
+    | "fixed-star-positions";
+  input: JsonValue;
+}
+
+export interface EphemerisOperationResponseV1 {
+  apiVersion: typeof CHART_API_VERSION;
+  operation: EphemerisOperationRequestV1["operation"];
+  engine: {
+    name: "Swiss Ephemeris";
+    version: string;
+  };
+  result: JsonValue;
+}
+
 export const DEFAULT_SETTINGS: CalculationSettings = {
   zodiac: "tropical",
   ayanamsa: "lahiri",

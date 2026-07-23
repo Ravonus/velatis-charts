@@ -1,6 +1,6 @@
 {
   "name": "@velatis/charts-server",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Self-hosted, stateless Velatis Charts server powered by Swiss Ephemeris.",
   "license": "AGPL-3.0-or-later",
   "homepage": "https://github.com/Ravonus/velatis-charts#readme",
