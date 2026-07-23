@@ -1,0 +1,27 @@
+{
+  "name": "velatis-charts-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open, stateless astrology charting with shareable URLs.",
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "pnpm --filter @velatis/charts-contracts build && pnpm --filter @velatis/charts-client build && pnpm --filter @velatis/charts-web build && pnpm --filter @velatis/charts-server build",
+    "charts": "pnpm --filter @velatis/charts-server start",
+    "check": "pnpm format:check && pnpm typecheck && pnpm test && pnpm build && pnpm compliance",
+    "compliance": "node scripts/check-compliance.mjs",
+    "dev": "pnpm --parallel --filter @velatis/charts-web --filter @velatis/charts-server dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "typecheck": "pnpm --filter @velatis/charts-contracts build && pnpm --filter @velatis/charts-client build && pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "@velatis/charts-server",
+  "version": "0.1.0",
+  "description": "Self-hosted, stateless Velatis Charts server powered by Swiss Ephemeris.",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/Ravonus/velatis-charts#readme",
+  "bugs": {
+    "url": "https://github.com/Ravonus/velatis-charts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ravonus/velatis-charts.git",
+    "directory": "packages/server"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "velatis-charts": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "public",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/copy-web.mjs",
+    "dev": "tsx watch src/cli.ts serve",
+    "start": "node dist/cli.js serve",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@velatis/charts-contracts": "workspace:^",
+    "swisseph-v2": "^1.1.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

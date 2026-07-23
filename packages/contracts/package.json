@@ -1,0 +1,37 @@
+{
+  "name": "@velatis/charts-contracts",
+  "version": "0.1.0",
+  "description": "Versioned, implementation-neutral contracts for Velatis Charts.",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/Ravonus/velatis-charts#readme",
+  "bugs": {
+    "url": "https://github.com/Ravonus/velatis-charts/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ravonus/velatis-charts.git",
+    "directory": "packages/contracts"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

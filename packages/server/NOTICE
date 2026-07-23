@@ -1,0 +1,12 @@
+Velatis Charts Server
+Copyright 2026 Velatis Charts contributors
+
+This package interfaces with Swiss Ephemeris through the independently
+distributed swisseph-v2 Node.js binding. Swiss Ephemeris is Copyright
+Astrodienst AG and is subject to its published dual-license terms.
+
+Official Swiss Ephemeris licensing:
+https://www.astro.com/swisseph/sweph_g.htm
+
+Corresponding source for the unmodified upstream build:
+https://github.com/Ravonus/velatis-charts
