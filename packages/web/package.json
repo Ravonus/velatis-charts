@@ -1,6 +1,6 @@
 {
   "name": "@velatis/charts-web",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Open chart builder and SVG viewer for Velatis Charts.",
   "license": "AGPL-3.0-or-later",

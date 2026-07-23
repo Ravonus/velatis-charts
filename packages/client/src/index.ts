@@ -4,6 +4,9 @@ import {
   type ApiError,
   type ChartResultV1,
   type ChartStateV1,
+  type EphemerisOperationRequestV1,
+  type EphemerisOperationResponseV1,
+  type JsonValue,
 } from "@velatis/charts-contracts";
 
 export * from "@velatis/charts-contracts";
@@ -140,5 +143,27 @@ export class ChartsClient {
     if (!response.ok)
       throw new ChartsApiError(response.status, body as ApiError);
     return body as ChartResultV1;
+  }
+
+  async ephemeris<T extends JsonValue = JsonValue>(
+    operation: EphemerisOperationRequestV1["operation"],
+    input: JsonValue,
+    signal?: AbortSignal,
+  ): Promise<T> {
+    const url = new URL(`/api/${CHART_API_VERSION}/ephemeris`, this.baseUrl);
+    const response = await this.fetchImplementation(url, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...this.headers },
+      body: JSON.stringify({
+        operation,
+        input,
+      } satisfies EphemerisOperationRequestV1),
+      cache: "no-store",
+      signal,
+    });
+    const body: unknown = await response.json();
+    if (!response.ok)
+      throw new ChartsApiError(response.status, body as ApiError);
+    return (body as EphemerisOperationResponseV1).result as T;
   }
 }

@@ -4,6 +4,7 @@ import type { IncomingMessage, Server, ServerResponse } from "node:http";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { calculateChartState } from "./engine.js";
+import { calculateEphemerisOperation } from "./operations.js";
 
 const MAX_BODY_BYTES = 256_000;
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -146,6 +147,28 @@ export function createChartsServer(options: ChartsServerOptions = {}): Server {
               error instanceof Error
                 ? error.message
                 : "Could not calculate the chart",
+          },
+        });
+      }
+      return;
+    }
+
+    if (url.pathname === "/api/v1/ephemeris" && request.method === "POST") {
+      try {
+        const operation = await readJson(request);
+        writeJson(response, 200, calculateEphemerisOperation(operation));
+      } catch (error) {
+        const tooLarge =
+          error instanceof RangeError && error.message.includes("256 kB");
+        writeJson(response, tooLarge ? 413 : 400, {
+          error: {
+            code: tooLarge
+              ? "request_too_large"
+              : "invalid_ephemeris_operation",
+            message:
+              error instanceof Error
+                ? error.message
+                : "Could not calculate the ephemeris operation",
           },
         });
       }

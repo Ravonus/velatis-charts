@@ -1,6 +1,6 @@
 {
   "name": "@velatis/charts-contracts",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Versioned, implementation-neutral contracts for Velatis Charts.",
   "license": "Apache-2.0",
   "homepage": "https://github.com/Ravonus/velatis-charts#readme",

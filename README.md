@@ -18,7 +18,7 @@ pnpm --allow-build=swisseph-v2 dlx @velatis/charts-server serve
 The GitHub release works before the npm registry package is available:
 
 ```bash
-pnpm --allow-build=swisseph-v2 dlx https://github.com/Ravonus/velatis-charts/releases/download/v0.1.0/velatis-charts-server-0.1.0.tgz serve
+pnpm --allow-build=swisseph-v2 dlx https://github.com/Ravonus/velatis-charts/releases/download/v0.2.0/velatis-charts-server-0.2.0.tgz serve
 ```
 
 From a checkout:
@@ -66,6 +66,10 @@ const charts = new ChartsClient({
 
 const shareUrl = buildShareUrl(charts.baseUrl, state);
 const result = await charts.calculate(state);
+
+const positions = await charts.ephemeris("positions", {
+  samples: [{ julianDay: 2_461_231, bodyIds: [0, 1] }],
+});
 ```
 
 The application talks to a separately operated `@velatis/charts-server`. It
@@ -109,10 +113,20 @@ quickly without maintaining a private fork of chart calculation or URL state.
 - rejects invalid inputs and bodies over 256 kB;
 - does not retain request data.
 
+`POST /api/v1/ephemeris`
+
+- accepts a versioned `{ operation, input }` JSON envelope;
+- supports chart frames, batched positions, exact crossings, eclipse searches,
+  rise/set calculations, and fixed-star catalog/position operations;
+- returns only JSON and never exposes or transfers the native engine;
+- is bounded by operation-specific sample/result limits;
+- sets `Cache-Control: no-store` and does not retain request data.
+
 `GET /api/v1/health`
 
 - returns service and source metadata;
-- does not claim calculation readiness beyond the running process.
+- reports process readiness; production consumers should also execute a small
+  `positions` request before declaring calculation readiness.
 
 ## Privacy
 

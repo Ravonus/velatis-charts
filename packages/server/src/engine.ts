@@ -22,7 +22,7 @@ const require = createRequire(import.meta.url);
 // The native module's published declarations do not model every runtime union
 // accurately, so the adapter deliberately contains the loose boundary here.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Swiss = any;
+export type Swiss = any;
 
 let swiss: Swiss | undefined;
 
@@ -103,7 +103,7 @@ function locateEphemerisPath(): string | undefined {
     : undefined;
 }
 
-function getSwiss(): Swiss {
+export function getSwiss(): Swiss {
   if (swiss) return swiss;
   swiss = require("swisseph-v2") as Swiss;
   const ephemerisPath = locateEphemerisPath();
