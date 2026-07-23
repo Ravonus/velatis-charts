@@ -258,7 +258,9 @@ export default function App() {
           </div>
           <div className="command-card" aria-label="Quick start command">
             <span>Run it anywhere</span>
-            <code>pnpm dlx @velatis/charts-server serve</code>
+            <code>
+              pnpm --allow-build=swisseph-v2 dlx @velatis/charts-server serve
+            </code>
             <small>No database. No account. No tracking.</small>
           </div>
         </section>

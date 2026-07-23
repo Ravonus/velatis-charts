@@ -12,7 +12,13 @@ entire versioned input can be carried in a URL.
 Once the first public package is released:
 
 ```bash
-pnpm dlx @velatis/charts-server serve
+pnpm --allow-build=swisseph-v2 dlx @velatis/charts-server serve
+```
+
+The GitHub release works before the npm registry package is available:
+
+```bash
+pnpm --allow-build=swisseph-v2 dlx https://github.com/Ravonus/velatis-charts/releases/download/v0.1.0/velatis-charts-server-0.1.0.tgz serve
 ```
 
 From a checkout:
@@ -24,6 +30,11 @@ pnpm charts
 ```
 
 Then open <http://127.0.0.1:4321>.
+
+The explicit `--allow-build` grants only the Swiss Ephemeris native binding
+permission to compile. Modern pnpm versions block dependency build scripts by
+default, so omitting that flag can produce a server that starts but cannot
+calculate.
 
 ## Use it from another product
 

@@ -1,6 +1,7 @@
-import fs from "node:fs";
-import http, { type IncomingMessage, type ServerResponse } from "node:http";
-import path from "node:path";
+import * as fs from "node:fs";
+import * as http from "node:http";
+import type { IncomingMessage, Server, ServerResponse } from "node:http";
+import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { calculateChartState } from "./engine.js";
 
@@ -98,9 +99,7 @@ function serveAsset(
   return true;
 }
 
-export function createChartsServer(
-  options: ChartsServerOptions = {},
-): http.Server {
+export function createChartsServer(options: ChartsServerOptions = {}): Server {
   const allowedOrigins = options.allowedOrigins ?? [];
   const publicDirectory = options.publicDirectory ?? defaultPublicDirectory;
   const sourceUrl =
@@ -173,7 +172,7 @@ export function createChartsServer(
 
 export async function listen(
   options: ChartsServerOptions = {},
-): Promise<http.Server> {
+): Promise<Server> {
   const host = options.host ?? "127.0.0.1";
   const port = options.port ?? 4321;
   const server = createChartsServer(options);

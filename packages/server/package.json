@@ -32,16 +32,16 @@
     "NOTICE"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && node scripts/copy-web.mjs",
+    "build": "tsup --config tsup.config.ts && node scripts/copy-web.mjs",
     "dev": "tsx watch src/cli.ts serve",
     "start": "node dist/cli.js serve",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@velatis/charts-contracts": "workspace:^",
     "swisseph-v2": "^1.1.0"
   },
   "devDependencies": {
+    "@velatis/charts-contracts": "workspace:^",
     "tsx": "^4.20.3"
   },
   "publishConfig": {

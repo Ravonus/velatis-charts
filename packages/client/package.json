@@ -28,10 +28,10 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsup --config tsup.config.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
-  "dependencies": {
+  "devDependencies": {
     "@velatis/charts-contracts": "workspace:^"
   },
   "publishConfig": {
