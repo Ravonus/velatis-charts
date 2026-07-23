@@ -19,10 +19,10 @@
     "typecheck": "pnpm --filter @velatis/charts-contracts build && pnpm --filter @velatis/charts-client build && pnpm -r typecheck"
   },
   "devDependencies": {
-    "@types/node": "^24.1.0",
+    "@types/node": "^26.1.1",
     "prettier": "^3.6.2",
     "tsup": "^8.5.0",
-    "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
   }
 }
