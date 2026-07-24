@@ -46,6 +46,32 @@ describe("ephemeris operations", () => {
     expect(samples[1]?.positions).toHaveLength(2);
   });
 
+  it.each([
+    undefined,
+    {
+      zodiacMode: "sidereal",
+      siderealAyanamsaKey: "SE_SIDM_LAHIRI",
+    },
+    {
+      zodiacMode: "sidereal",
+      siderealAyanamsaKey: "SE_SIDM_USER",
+      customAyanamsaDegrees: 24.25,
+    },
+  ])("supports default and sidereal position settings", (settings) => {
+    const response = calculateEphemerisOperation({
+      operation: "positions",
+      input: {
+        samples: [{ julianDay: 2_460_000.5, bodyIds: [0] }],
+        settings,
+      },
+    });
+    expect(response.result).toEqual([
+      expect.objectContaining({
+        positions: [expect.objectContaining({ longitude: expect.any(Number) })],
+      }),
+    ]);
+  });
+
   it("finds exact longitude crossings on the server", () => {
     const response = calculateEphemerisOperation({
       operation: "crossings",
@@ -77,5 +103,112 @@ describe("ephemeris operations", () => {
       rows: Array<{ name: string }>;
     };
     expect(catalog.rows.some((row) => row.name === "Sirius")).toBe(true);
+
+    const defaults = calculateEphemerisOperation({
+      operation: "fixed-star-catalog",
+      input: {},
+    }).result as { rows: unknown[]; limit: number; offset: number };
+    expect(defaults.limit).toBe(32);
+    expect(defaults.offset).toBe(0);
+    expect(defaults.rows.length).toBeGreaterThan(0);
+  });
+
+  it("finds bounded solar and lunar eclipses", () => {
+    const response = calculateEphemerisOperation({
+      operation: "eclipses",
+      input: { fromJd: 2_460_000, toJd: 2_460_500 },
+    });
+    const eclipses = response.result as Array<{
+      kind: string;
+      maximum: number;
+      eclipseType: string;
+    }>;
+    expect(eclipses.length).toBeGreaterThan(0);
+    expect(eclipses.some((event) => event.kind === "solar")).toBe(true);
+    expect(eclipses.some((event) => event.kind === "lunar")).toBe(true);
+    expect(eclipses.every((event) => event.maximum >= 2_460_000)).toBe(true);
+  });
+
+  it("calculates rise and set events", () => {
+    for (const event of ["rise", "set"]) {
+      const response = calculateEphemerisOperation({
+        operation: "rise-set",
+        input: {
+          event,
+          startJd: 2_460_000.5,
+          bodyId: 0,
+          latitude: 39.7392,
+          longitude: -104.9903,
+        },
+      });
+      expect(response.result).toMatchObject({
+        transitJulianDay: expect.any(Number),
+      });
+    }
+  });
+
+  it("calculates fixed-star positions", () => {
+    const response = calculateEphemerisOperation({
+      operation: "fixed-star-positions",
+      input: {
+        julianDay: 2_460_000.5,
+        stars: [
+          {
+            key: "sirius-alcm",
+            name: "Sirius",
+            designation: "alCMa",
+          },
+        ],
+      },
+    });
+    expect(response.result).toEqual([
+      expect.objectContaining({
+        starKey: "sirius-alcm",
+        starName: "Sirius",
+        family: "Swiss",
+        nature: "",
+        longitude: expect.any(Number),
+        declination: expect.any(Number),
+      }),
+    ]);
+  });
+
+  it.each([
+    [{ operation: "unknown", input: {} }, "Unsupported ephemeris operation"],
+    [
+      {
+        operation: "eclipses",
+        input: { fromJd: 2_460_000, toJd: 2_500_000 },
+      },
+      "eclipse range is invalid",
+    ],
+    [
+      { operation: "positions", input: { samples: "not-an-array" } },
+      "must be an array",
+    ],
+    [
+      {
+        operation: "positions",
+        input: {
+          samples: [{ julianDay: 2_460_000.5, bodyIds: [0.5] }],
+        },
+      },
+      "must be an integer",
+    ],
+    [
+      {
+        operation: "positions",
+        input: {
+          settings: {
+            zodiacMode: "sidereal",
+            siderealAyanamsaKey: "not-supported",
+          },
+          samples: [{ julianDay: 2_460_000.5, bodyIds: [0] }],
+        },
+      },
+      "siderealAyanamsaKey is unsupported",
+    ],
+  ])("rejects an invalid bounded operation", (request, message) => {
+    expect(() => calculateEphemerisOperation(request)).toThrow(message);
   });
 });

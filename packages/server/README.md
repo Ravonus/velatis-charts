@@ -4,29 +4,35 @@ The self-hosted, stateless Swiss Ephemeris runtime and charting web application.
 It has no database, accounts, analytics, chat, video, AI, billing, or storage.
 
 ```bash
-pnpm --allow-build=swisseph-v2 dlx @velatis/charts-server serve --host 0.0.0.0 --port 4321
+pnpm --allow-build=swisseph-v2 dlx \
+  @velatis/charts-server serve \
+  --host 127.0.0.1 \
+  --port 4321
 ```
 
-The `--allow-build` permission is scoped to the native Swiss Ephemeris binding.
-Until the npm package is published, replace the package name with:
+Until the npm package is published, use:
 
 ```text
 https://github.com/Ravonus/velatis-charts/releases/download/v0.2.0/velatis-charts-server-0.2.0.tgz
 ```
 
-The server exposes:
+## Endpoints
 
 - `POST /api/v1/charts`
 - `POST /api/v1/ephemeris`
 - `GET /api/v1/health`
-- the shareable chart builder at `/`
+- the bundled chart builder at `/`
 
-The ephemeris endpoint provides stateless JSON operations for chart frames,
-batched positions, exact crossings, eclipse searches, rise/set calculations,
-and fixed stars. It is the integration boundary for applications that need the
-complete calculation engine without bundling that engine themselves.
+Chart and ephemeris responses use `Cache-Control: no-store`. Request bodies are
+bounded to 256 kB. The service applies no persistence; operators must also
+configure proxies, CDNs, and logs not to retain chart bodies or share queries.
 
-The server and bundled web UI are AGPL-3.0-or-later. Network operators must
-provide corresponding source to users as required by that license. The
-`@velatis/charts-client` integration package is separately Apache-2.0 licensed
-and contains no Swiss Ephemeris code.
+Set `VELATIS_CHARTS_SOURCE_URL` to the exact corresponding-source tag for the
+running build. Use `VELATIS_CHARTS_ALLOWED_ORIGINS` to restrict browser CORS.
+
+The server and bundled web UI are AGPL-3.0-or-later. Network operators are
+responsible for the corresponding-source obligations. The separately licensed
+Apache client contains no Swiss Ephemeris implementation.
+
+See the root [README](../../README.md), [LICENSING.md](../../LICENSING.md), and
+[release checklist](../../docs/qa/release-checklist.md).

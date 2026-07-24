@@ -1,0 +1,27 @@
+name: velatis-charts
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: velatis/charts-server:0.2.0
+    environment:
+      VELATIS_CHARTS_SOURCE_URL: https://github.com/Ravonus/velatis-charts/tree/v0.2.0
+    network_mode: host
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    cpus: 1.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

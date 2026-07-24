@@ -50,6 +50,14 @@ function updatePerson(
   };
 }
 
+function calculateButtonLabel(
+  status: "idle" | "loading" | "ready" | "error",
+  personCount: number,
+): string {
+  if (status === "loading") return "Calculating…";
+  return personCount > 1 ? "Compare charts" : "Calculate chart";
+}
+
 function PersonFields({
   person,
   index,
@@ -389,11 +397,7 @@ export default function App() {
                 type="submit"
                 disabled={status === "loading"}
               >
-                {status === "loading"
-                  ? "Calculating…"
-                  : state.people.length > 1
-                    ? "Compare charts"
-                    : "Calculate chart"}
+                {calculateButtonLabel(status, state.people.length)}
               </button>
               <button
                 className="secondary-button"
