@@ -1,0 +1,3 @@
+coverage/
+reports/
+tests/acceptance/features/**/*.feature

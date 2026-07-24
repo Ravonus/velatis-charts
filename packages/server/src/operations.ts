@@ -79,7 +79,7 @@ function calculationFlags(
   settings: OperationSettings,
   julianDay: number,
 ): number {
-  let flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
+  const flags = swe.SEFLG_SWIEPH | swe.SEFLG_SPEED;
   if (settings.zodiacMode !== "sidereal") return flags;
   if (settings.siderealAyanamsaKey === "SE_SIDM_USER") {
     swe.swe_set_sid_mode(

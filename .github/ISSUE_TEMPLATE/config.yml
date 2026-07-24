@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Setup and integration discussion
+    url: https://github.com/Ravonus/velatis-charts/discussions
+    about: Ask self-hosting, API, extension, and integration questions.
+  - name: Private security report
+    url: https://github.com/Ravonus/velatis-charts/security/advisories/new
+    about: Report vulnerabilities without exposing private details.

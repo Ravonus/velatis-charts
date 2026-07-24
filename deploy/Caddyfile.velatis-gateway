@@ -1,0 +1,6 @@
+charts-api.velatis.io {
+	import security_headers
+	encode zstd gzip
+
+	reverse_proxy 127.0.0.1:4321
+}
