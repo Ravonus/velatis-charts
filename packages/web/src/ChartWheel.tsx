@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import type {
   ChartAspect,
   ChartResultV1,
@@ -341,7 +342,10 @@ function PlanetModal({
   if (!chart || !planet) return null;
   const accent =
     result.charts.length > 1 ? PERSON_ACCENTS[focus.chartIndex] : undefined;
-  return (
+  // Portal to <body>: `position: fixed` re-anchors to any ancestor that has a
+  // transform or backdrop-filter (the result panel blurs), which pinned the
+  // dialog inside the scroll flow instead of over the viewport.
+  return createPortal(
     <div
       className="planet-modal-backdrop"
       role="presentation"
@@ -406,7 +410,8 @@ function PlanetModal({
           ))}
         </ul>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
