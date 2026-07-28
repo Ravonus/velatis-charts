@@ -51,6 +51,27 @@ const ASPECT_GLYPHS = {
 // Per-person ring accents for the compare bi-wheel: the inner (first) chart
 // runs warm, the outer runs cool, matching the aspect palette's temperature.
 const PERSON_ACCENTS = ["#f5d689", "#78aef2"];
+// Classic planet shades, tuned for the dark field: luminaries bright, the
+// personal planets warm-to-green, the outers cool, the points muted.
+const PLANET_COLORS: Record<string, string> = {
+  sun: "#f6c95c",
+  moon: "#dbe3f2",
+  mercury: "#efa860",
+  venus: "#7ed9a4",
+  mars: "#f1655d",
+  jupiter: "#9d8cf0",
+  saturn: "#c9a27a",
+  uranus: "#5fd7e8",
+  neptune: "#6f9ef8",
+  pluto: "#c96f8e",
+  "north-node": "#a7a0b8",
+  chiron: "#9fb37a",
+  lilith: "#b07bd6",
+};
+
+function planetColor(planetId: string): string {
+  return PLANET_COLORS[planetId] ?? "#f8e6b9";
+}
 const SOLO_PLANET_RADIUS = 181;
 const INNER_PLANET_RADIUS = 138;
 const OUTER_PLANET_RADIUS = 184;
@@ -161,6 +182,7 @@ function PlanetGlyph({
   radius,
   order,
   accent,
+  showDegrees,
   hot,
   dimmed,
   onHover,
@@ -170,12 +192,14 @@ function PlanetGlyph({
   radius: number;
   order: number;
   accent?: string;
+  showDegrees: boolean;
   hot: boolean;
   dimmed: boolean;
   onHover: (hovering: boolean) => void;
   onSelect: () => void;
 }) {
   const point = pointAt(planet.longitude, radius);
+  const shade = planetColor(planet.id);
   const className = [
     "planet-node",
     hot ? "is-hot" : "",
@@ -201,16 +225,37 @@ function PlanetGlyph({
         onSelect();
       }}
     >
+      {/* The person accent stays on a thin outer identity ring so the pair
+          reads at a glance; the planet's own shade owns the disc + glyph. */}
+      {accent ? (
+        <circle
+          className="planet-identity-ring"
+          cx={point.x}
+          cy={point.y}
+          r="19.5"
+          style={{ stroke: accent }}
+        />
+      ) : null}
       <circle
         className="planet-marker"
         cx={point.x}
         cy={point.y}
         r="17"
-        style={accent ? { stroke: accent } : undefined}
+        style={{ stroke: shade }}
       />
-      <text className="planet-glyph" x={point.x} y={point.y + 1}>
+      <text
+        className="planet-glyph"
+        x={point.x}
+        y={point.y + 1}
+        style={{ fill: shade }}
+      >
         {planet.glyph}
       </text>
+      {showDegrees ? (
+        <text className="planet-degree" x={point.x} y={point.y + 26}>
+          {`${planet.degreeInSign.toFixed(0)}° ${SIGNS[planet.signIndex]}`}
+        </text>
+      ) : null}
       {planet.retrograde ? (
         <text className="retrograde-glyph" x={point.x + 12} y={point.y - 11}>
           ℞
@@ -374,6 +419,9 @@ function chartPlanetMap(chart: NatalChart): Map<string, PlanetPosition> {
 export function ChartWheel({ result }: { result: ChartResultV1 }) {
   const [hovered, setHovered] = useState<WheelFocus | null>(null);
   const [selected, setSelected] = useState<WheelFocus | null>(null);
+  const [showDegrees, setShowDegrees] = useState(false);
+  const [showNatal, setShowNatal] = useState(true);
+  const [showSynastry, setShowSynastry] = useState(true);
   const primary = result.charts[0];
   const compare = result.charts[1];
   const focus = hovered ?? selected;
@@ -398,6 +446,20 @@ export function ChartWheel({ result }: { result: ChartResultV1 }) {
   const pair = compare ? result.synastry[0] : undefined;
   const showAspects = result.state.presentation?.showAspectLines !== false;
   const primaryRadius = compare ? INNER_PLANET_RADIUS : SOLO_PLANET_RADIUS;
+  const toggle = (
+    label: string,
+    value: boolean,
+    onChange: (next: boolean) => void,
+  ) => (
+    <button
+      type="button"
+      className={`wheel-toggle${value ? " is-on" : ""}`}
+      aria-pressed={value}
+      onClick={() => onChange(!value)}
+    >
+      {label}
+    </button>
+  );
   return (
     <figure className="wheel-figure">
       {compare ? (
@@ -410,6 +472,15 @@ export function ChartWheel({ result }: { result: ChartResultV1 }) {
           ))}
         </div>
       ) : null}
+      <div className="wheel-toggles" role="group" aria-label="Wheel display">
+        {toggle("Degrees", showDegrees, setShowDegrees)}
+        {toggle(
+          compare ? "Inner aspects" : "Aspect lines",
+          showNatal,
+          setShowNatal,
+        )}
+        {compare ? toggle("Bond lines", showSynastry, setShowSynastry) : null}
+      </div>
       <svg
         className={`chart-wheel${focus ? " has-focus" : ""}`}
         viewBox="0 0 600 600"
@@ -504,7 +575,7 @@ export function ChartWheel({ result }: { result: ChartResultV1 }) {
             </g>
           );
         })}
-        {showAspects ? (
+        {showAspects && showNatal ? (
           <AspectLines
             aspects={primary.aspects}
             kind="natal"
@@ -516,7 +587,7 @@ export function ChartWheel({ result }: { result: ChartResultV1 }) {
             focus={focus}
           />
         ) : null}
-        {showAspects && pair && comparePlanets ? (
+        {showAspects && showSynastry && pair && comparePlanets ? (
           <AspectLines
             aspects={pair.aspects}
             kind="synastry"
@@ -528,12 +599,24 @@ export function ChartWheel({ result }: { result: ChartResultV1 }) {
             focus={focus}
           />
         ) : null}
+        <circle
+          className="ascendant-marker"
+          {...pointAt(primary.ascendant, 261)}
+          r="5"
+        />
+        <text className="wheel-monogram" x="300" y="293">
+          VC
+        </text>
+        <text className="wheel-person" x="300" y="322">
+          {result.charts.map((chart) => chart.personName).join(" × ")}
+        </text>
         {primary.planets.map((planet, index) => (
           <PlanetGlyph
             key={planet.id}
             planet={planet}
             radius={primaryRadius}
             order={index}
+            showDegrees={showDegrees}
             accent={compare ? PERSON_ACCENTS[0] : undefined}
             hot={
               sameFocus(focus, { chartIndex: 0, planetId: planet.id }) ||
@@ -555,6 +638,7 @@ export function ChartWheel({ result }: { result: ChartResultV1 }) {
             planet={planet}
             radius={OUTER_PLANET_RADIUS}
             order={primary.planets.length + index}
+            showDegrees={showDegrees}
             accent={PERSON_ACCENTS[1]}
             hot={
               sameFocus(focus, { chartIndex: 1, planetId: planet.id }) ||
@@ -570,17 +654,6 @@ export function ChartWheel({ result }: { result: ChartResultV1 }) {
             onSelect={() => setSelected({ chartIndex: 1, planetId: planet.id })}
           />
         ))}
-        <circle
-          className="ascendant-marker"
-          {...pointAt(primary.ascendant, 261)}
-          r="5"
-        />
-        <text className="wheel-monogram" x="300" y="293">
-          VC
-        </text>
-        <text className="wheel-person" x="300" y="322">
-          {result.charts.map((chart) => chart.personName).join(" × ")}
-        </text>
       </svg>
       <figcaption>
         {primary.personName} · Asc {primary.ascendant.toFixed(1)}° · MC{" "}

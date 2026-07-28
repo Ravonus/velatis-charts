@@ -685,6 +685,53 @@ button:disabled {
   box-shadow: 0 0 8px currentcolor;
 }
 
+.wheel-toggles {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.wheel-toggle {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.wheel-toggle:hover {
+  color: #f8e6b9;
+}
+
+.wheel-toggle.is-on {
+  color: #f8e6b9;
+  border-color: rgba(240, 210, 141, 0.55);
+  box-shadow: 0 0 12px rgba(240, 210, 141, 0.18);
+}
+
+.planet-identity-ring {
+  fill: none;
+  stroke-width: 1.1;
+  opacity: 0.75;
+}
+
+.planet-degree {
+  fill: #a9a0c2;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 8px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
 .planet-modal-backdrop {
   position: fixed;
   inset: 0;
