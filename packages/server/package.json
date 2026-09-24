@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@velatis/charts-contracts": "workspace:^",
-    "tsx": "^4.20.3"
+    "tsx": "^4.23.15"
   },
   "publishConfig": {
     "access": "public"
